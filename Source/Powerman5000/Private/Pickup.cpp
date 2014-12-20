@@ -29,7 +29,7 @@ APickup::APickup(const class FPostConstructInitializeProperties& PCIP)
 
 void APickup::OnPickedUp_Implementation()
 {
-
+	// no default behavior
 }
 
 
