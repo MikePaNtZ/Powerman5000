@@ -2,6 +2,7 @@
 
 #include "Powerman5000.h"
 #include "Powerman5000Character.h"
+#include "BatteryPickup.h"
 
 //////////////////////////////////////////////////////////////////////////
 // APowerman5000Character
@@ -9,6 +10,18 @@
 APowerman5000Character::APowerman5000Character(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+
+	// Set a base power level for the character.
+	PowerLevel = 2000.f;
+	// Set the dependence of speed on the power level
+	SpeedFactor = 0.75f;
+	BaseSpeed = 10.0f;
+
+	// Create our battery collection volume
+	CollectionSphere = ObjectInitializer.CreateDefaultSubobject<USphereComponent>(this, TEXT("CollectionSphere"));
+	CollectionSphere->AttachTo(RootComponent);
+	CollectionSphere->SetSphereRadius(200.f);
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
@@ -51,6 +64,9 @@ void APowerman5000Character::SetupPlayerInputComponent(class UInputComponent* In
 	check(InputComponent);
 	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+	// Binding for character pickup of a battery.
+	InputComponent->BindAction("CollectPickups", IE_Pressed, this, &APowerman5000Character::CollectBatteries);
 
 	InputComponent->BindAxis("MoveForward", this, &APowerman5000Character::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &APowerman5000Character::MoveRight);
@@ -126,3 +142,44 @@ void APowerman5000Character::MoveRight(float Value)
 		AddMovementInput(Direction, Value);
 	}
 }
+
+void APowerman5000Character::CollectBatteries()
+{
+	float BatteryPower = 0.f;
+
+	// Get all overlapping actors and store them in a collected actors array.
+	TArray<AActor*> CollectedActors;
+	CollectionSphere->GetOverlappingActors(CollectedActors);
+
+	// For each actor collected
+	for (int32 iCollected = 0; iCollected < CollectedActors.Num(); ++iCollected)
+	{
+		// Cast the collected actor to ABatteryPickup
+		ABatteryPickup* const TestBattery = Cast<ABatteryPickup>(CollectedActors[iCollected]);
+
+		// If the cast is successful, and the battery is valid and active
+		if (TestBattery && !TestBattery->IsPendingKill() && TestBattery->isActive)
+		{
+			// Store the battery power for adding to the character's power.
+			BatteryPower = BatteryPower + TestBattery->PowerLevel;
+			// Call the battery's OnPickedUp function
+			TestBattery->OnPickedUp();
+			// Deactivate the battery
+			TestBattery->isActive = false;
+		}
+	}
+
+	if (BatteryPower > 0.f)
+	{
+		// Call the Blueprinted implementation of PowerUp with the total battery power as input
+		PowerUp(BatteryPower);
+	}
+
+}
+
+void APowerman5000Character::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	CharacterMovement->MaxWalkSpeed = SpeedFactor * PowerLevel + BaseSpeed;
+}
+

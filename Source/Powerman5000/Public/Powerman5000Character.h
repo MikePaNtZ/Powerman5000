@@ -18,6 +18,24 @@ class APowerman5000Character : public ACharacter
 public:
 	APowerman5000Character(const FObjectInitializer& ObjectInitializer);
 
+	/** Collection volume. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Power)
+		TSubobjectPtr<class USphereComponent> CollectionSphere;
+
+	/** Power level of our character. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Power)
+	float PowerLevel;
+
+	/** Power multiplier for the speed of the character. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Power)
+	float SpeedFactor;
+
+	/** Baseline speed of the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Power)
+	float BaseSpeed;
+
+	virtual void Tick(float DeltaSeconds);
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseTurnRate;
@@ -27,6 +45,14 @@ public:
 	float BaseLookUpRate;
 
 protected:
+
+	/** Called when we press a key to collect any batteries inside the SphereComponent*/
+	UFUNCTION(BlueprintCallable, Category=Power)
+	void CollectBatteries();
+
+	/** Called by CollectBatteries() to use the Blueprinted PowerUp functionality. */
+	UFUNCTION(BlueprintImplementableEvent, Category=Power)
+	void PowerUp(float BatteryPower);
 
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
