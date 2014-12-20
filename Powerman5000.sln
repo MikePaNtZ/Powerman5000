@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Powerman5000", "Intermediate\ProjectFiles\Powerman5000.vcxproj", "{751DC00C-8645-4C1E-8E02-835AFA32532E}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		DebugGame Editor|Windows = DebugGame Editor|Windows
+		DebugGame|Windows = DebugGame|Windows
+		Development Editor|Windows = Development Editor|Windows
+		Development|Windows = Development|Windows
+		Shipping|Windows = Shipping|Windows
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{751DC00C-8645-4C1E-8E02-835AFA32532E}.DebugGame Editor|Windows.ActiveCfg = DebugGame_Editor|x64
+		{751DC00C-8645-4C1E-8E02-835AFA32532E}.DebugGame Editor|Windows.Build.0 = DebugGame_Editor|x64
+		{751DC00C-8645-4C1E-8E02-835AFA32532E}.DebugGame|Windows.ActiveCfg = DebugGame_Game|x64
+		{751DC00C-8645-4C1E-8E02-835AFA32532E}.DebugGame|Windows.Build.0 = DebugGame_Game|x64
+		{751DC00C-8645-4C1E-8E02-835AFA32532E}.Development Editor|Windows.ActiveCfg = Development_Editor|x64
+		{751DC00C-8645-4C1E-8E02-835AFA32532E}.Development Editor|Windows.Build.0 = Development_Editor|x64
+		{751DC00C-8645-4C1E-8E02-835AFA32532E}.Development|Windows.ActiveCfg = Development_Game|x64
+		{751DC00C-8645-4C1E-8E02-835AFA32532E}.Development|Windows.Build.0 = Development_Game|x64
+		{751DC00C-8645-4C1E-8E02-835AFA32532E}.Shipping|Windows.ActiveCfg = Shipping_Game|Win32
+		{751DC00C-8645-4C1E-8E02-835AFA32532E}.Shipping|Windows.Build.0 = Shipping_Game|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+	EndGlobalSection
+EndGlobal
