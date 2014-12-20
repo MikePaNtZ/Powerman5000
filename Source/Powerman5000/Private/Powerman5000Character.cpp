@@ -3,6 +3,8 @@
 #include "Powerman5000.h"
 #include "Powerman5000Character.h"
 #include "BatteryPickup.h"
+#include "Powerman5000GameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 //////////////////////////////////////////////////////////////////////////
 // APowerman5000Character
@@ -147,32 +149,37 @@ void APowerman5000Character::CollectBatteries()
 {
 	float BatteryPower = 0.f;
 
-	// Get all overlapping actors and store them in a collected actors array.
-	TArray<AActor*> CollectedActors;
-	CollectionSphere->GetOverlappingActors(CollectedActors);
+	APowerman5000GameMode* MyGameMode = Cast<APowerman5000GameMode>(UGameplayStatics::GetGameMode(this));
 
-	// For each actor collected
-	for (int32 iCollected = 0; iCollected < CollectedActors.Num(); ++iCollected)
+	if (MyGameMode->GetCurrentState() == Powerman5000PlayState::Playing)
 	{
-		// Cast the collected actor to ABatteryPickup
-		ABatteryPickup* const TestBattery = Cast<ABatteryPickup>(CollectedActors[iCollected]);
+		// Get all overlapping actors and store them in a collected actors array.
+		TArray<AActor*> CollectedActors;
+		CollectionSphere->GetOverlappingActors(CollectedActors);
 
-		// If the cast is successful, and the battery is valid and active
-		if (TestBattery && !TestBattery->IsPendingKill() && TestBattery->isActive)
+		// For each actor collected
+		for (int32 iCollected = 0; iCollected < CollectedActors.Num(); ++iCollected)
 		{
-			// Store the battery power for adding to the character's power.
-			BatteryPower = BatteryPower + TestBattery->PowerLevel;
-			// Call the battery's OnPickedUp function
-			TestBattery->OnPickedUp();
-			// Deactivate the battery
-			TestBattery->isActive = false;
-		}
-	}
+			// Cast the collected actor to ABatteryPickup
+			ABatteryPickup* const TestBattery = Cast<ABatteryPickup>(CollectedActors[iCollected]);
 
-	if (BatteryPower > 0.f)
-	{
-		// Call the Blueprinted implementation of PowerUp with the total battery power as input
-		PowerUp(BatteryPower);
+			// If the cast is successful, and the battery is valid and active
+			if (TestBattery && !TestBattery->IsPendingKill() && TestBattery->isActive)
+			{
+				// Store the battery power for adding to the character's power.
+				BatteryPower = BatteryPower + TestBattery->PowerLevel;
+				// Call the battery's OnPickedUp function
+				TestBattery->OnPickedUp();
+				// Deactivate the battery
+				TestBattery->isActive = false;
+			}
+		}
+
+		if (BatteryPower > 0.f)
+		{
+			// Call the Blueprinted implementation of PowerUp with the total battery power as input
+			PowerUp(BatteryPower);
+		}
 	}
 
 }
